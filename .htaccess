@@ -1,0 +1,5 @@
+RewriteEngine On
+
+RewriteBase /props/c101
+
+RewriteRule ^crawler(.*)  ./apps/crawler?c=$1
