@@ -6,13 +6,27 @@ class crawlerException extends Exception{}
 
 
 class crawler{
+ 
+  protected $col;
 
   function __construct(){
-
+  	    $con = new MongoClient();
+  	    $db = $con->selectDB("crawl");
+  	    $this->col = $db->selectCollection("stats");
   }
 
 
   function run(){
+
+  	   $request = array(
+  	   	  "ip" => $_SERVER["REMOTE_ADDR"],
+  	   	  "client" =>  get_browser()
+  	   	);
+
+  	     if(is_numeric(strip_tags(trim(str_replace(".", "", $request["ip"])))))
+  	     {
+  	         $col->save($request);	
+  	     }
 
        $this->consult(strip_tags($_GET["c"]));
 
