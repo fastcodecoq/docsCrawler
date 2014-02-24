@@ -11,6 +11,7 @@
   <div class="banner"></div>
   <br>
   <br>
+  <br>
   <form class="center w70" data-controller="list">
   	<br>
   	<span>Separador</span>&nbsp;<input type="text" style="width:7px" name="separator" placeholder="," size="1" maxlength="1" data-separator>&nbsp;<span title="Ingresa el separador de cada documento, por defecto coma (,)" data-dialogs>(?)</span> <span class="logo"></span>
@@ -27,8 +28,7 @@
 <br>
 
 <div class="center w70 ninja" style="overflow:auto;" id="table-container">
-  <a href="#">Procesar mas</a> &nbsp;&nbsp;&nbsp; <span>Para exportar la tabla de resultados a excel, solo selecciona el contenido y luego dar copiar</span>
-  <br>
+  <a href="#" class="btn">Procesar mas</a> &nbsp;&nbsp;<a class="btn" download="lista.xls" href="#" onclick="return ExcellentExport.excel(this, 'result', 'lista');">Descargar tabla</a>
   <br>
   <br>
   <br>
@@ -52,7 +52,8 @@
   <br>
   <br>
   <br>
-  <a href="#">Procesar mas</a>&nbsp;&nbsp;&nbsp; <span>Para exportar la tabla de resultados a excel, solo selecciona el contenido y luego dar copiar</span>
+  <a href="#" class="btn">Procesar mas</a>&nbsp;&nbsp; <a  class="btn" download="lista.xls" href="#" onclick="return ExcellentExport.excel(this, 'result', 'lista');">Descargar tabla</a>
+ 
 </div>
   <br>
   <br>
