@@ -89,7 +89,7 @@
 
 
     	        	 	 console.log(success, docs.length - 1); 
-    	        	     alert("Procesando " + success + " de " + docs.length + " Fállidos " + fails);    	        	 	    	        	 	
+    	        	     alert("<div style='padding:7px'>Procesados " + success + " de " + docs.length + " Fallidos " + fails + "</div>");    	        	 	    	        	 	
     	        	 	
     	        	 	      if (success > (docs.length-1))    	        	      
     	        	      	 {window.self.clearInterval(window.flag); render(output); return false;}
