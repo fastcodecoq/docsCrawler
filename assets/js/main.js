@@ -36,7 +36,8 @@
             	  	     list : model.find("[data-list]").val()
              			};
 
-    	        	 fields.separator = (fields.separator.split("").length === 0) ? "," : fields.separator;
+    	        	 fields.separator = (fields.separator.split("").length === 0) ? "\n" : fields.separator;
+
 
     	        	 //1103094999,103099389,1143363847
     	        	 var docs = fields.list.split(fields.separator); 
@@ -61,22 +62,40 @@
 						 var result = "";										
 
 						 for(x in output)
-						   if(!output[x].fail)
+                            {
+                             var doc = output[x].doc;
+                             var control = false;                                 
+
+                             if(window.zone && (output[x].zona!=undefined))
+                                control = !(output[x].zona.municipio.toLowerCase() +","+ output[x].zona.dpto.toLowerCase()).match(window.zone);
+
+                         
+                               
+                            if(!control && !output[x].fail)
 						   	 result += template
-						   			   .replace(/\{\{doc\}\}/g, output[x].doc)
+						   			   .replace(/\{\{doc\}\}/g, doc)
 						   			   .replace(/\{\{location\}\}/g, output[x].puesto.lugar + " (" + output[x].puesto.dir + ")")
 						   			   .replace(/\{\{point\}\}/g, output[x].mesa)
 						   			   .replace(/\{\{city\}\}/g, output[x].zona.municipio)
 						   			   .replace(/\{\{state}\}/g, output[x].zona.dpto)
-						   			   .replace(/\{\{date}\}/g, output[x].fecha)
-						   else
-						   	result += template
-						   			   .replace(/\{\{doc\}\}/g, output[x].doc)
-						   			   .replace(/\{\{location\}\}/g, "X")
-						   			   .replace(/\{\{point\}\}/g, "X")
-						   			   .replace(/\{\{city\}\}/g, "X")
-						   			   .replace(/\{\{state}\}/g, "X")
-						   			   .replace(/\{\{date}\}/g, "X")
+						   			   .replace(/\{\{date}\}/g, output[x].fecha);
+                            else
+                            {
+                                fails=fails+1;
+                                result += template
+                                       .replace(/\{\{doc\}\}/g, doc)
+                                       .replace(/\{\{location\}\}/g, "X")
+                                       .replace(/\{\{point\}\}/g, "X")
+                                       .replace(/\{\{city\}\}/g, "X")
+                                       .replace(/\{\{state}\}/g, "X")
+                                       .replace(/\{\{date}\}/g, "X");
+
+                            }
+
+                             }
+					
+                        //result +=   "<tr><td colspan='2'>Votos Nulos</td><td colspan='4'>" + fails + "</td></tr>"
+                          //        + "<tr><td colspan='2'>Votos Validos</td><td colspan='4'>" + (output.length - fails) + "</td></tr>";
 
 						$("#result").find("tbody").html(result);
 						$("#table-container").removeClass("ninja");
@@ -128,7 +147,7 @@
     	        	 }
 
     	        
-    	          window.flag = setInterval(function(){ if(cond || (cond === undefined)){ success = success + 1; request(success);} }, 1000);	 
+    	          window.flag = setInterval(function(){ if(cond || (cond === undefined)){ success = success + 1; request(success);} }, 850);	 
     	        	 
     	        	 
 
@@ -136,10 +155,47 @@
 
     }
 
+    function zoneController(e){
+        
+        e.preventDefault();
 
+        if($(this).hasClass("filtered"))
+        {               
+            $(this).text(window.filterOriginal).removeClass("filtered");
+            window.zone = undefined;
+            return false;
+        }
+
+        var success = function(){
+            window.zone = $("[data-zone-val]").val().replace(/\s/,"");
+          if(window.zone.split(",").length > 1)           
+           {
+            alert("<strong>zona aplicada</strong><br><span>Ahora los votantes que no apliquen para tu zona serán marcados como fallidos (X).</span>");
+            window.filterOriginal = $("[data-zone-filter]").text();
+            $("[data-zone-filter]").text("zona: " + window.zone + " x").addClass("filtered");
+           }
+          else
+           alert("Zona invalida, recuerda ingresar municipio y departamento separados por coma (,)"); 
+        }   
+
+
+        var template = "<div style='padding:7px'>"
+                       + "<span>Ingresa el municipio y el departamento separados por coma (,). Ej. cucuta, norte de santander</span><br><br>"
+                       + "<input type='text' class='modern' data-zone-val>"
+                       +"</div>";
+
+        alert(template, {onAccept : success});
+
+
+    }
+
+    function filterZoneController(){
+        $("[data-zone-filter]").die("click").live("click", zoneController);
+    }
 
     function onControllers(){
     	  listController();    	  
+          filterZoneController();
     }
 
    }

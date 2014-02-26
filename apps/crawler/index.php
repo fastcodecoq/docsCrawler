@@ -1,9 +1,9 @@
 <?
 header('Content-type: application/json');	
 
+define("url", "http://www3.registraduria.gov.co/censo/_censoresultado.php?nCedula=");
 
 class crawlerException extends Exception{}
-
 
 class crawler{
  
@@ -17,7 +17,7 @@ class crawler{
   function run(){
 
 
-       $this->consult(strip_tags($_GET["c"]));
+       $this->consult();
 
   }
 
@@ -26,13 +26,15 @@ class crawler{
   protected function consult(){
 
 	
-  include(dirname(__FILE__) . "/lib/simple.dom.php");
+  include_once(dirname(__FILE__) . "/lib/simple.dom.php");
   
      
   $cedula = trim(strip_tags($_GET['c']));
+   
+  if(!is_numeric($cedula))
+  	$this->error("Documento no válido");
 
-
-  $html = file_get_html("http://www3.registraduria.gov.co/censo/_censoresultado.php?nCedula={$cedula}");
+  $html = file_get_html( url . "{$cedula}");
 
   $celdas = $html->find('table tr td') or die($this->error($cedula));
  
@@ -46,22 +48,22 @@ class crawler{
 	  switch ($coun){  
 		
 		  case 2 :
-		    $info["dpto"] = str_replace("  ","",$element->plaintext);
+		    $info["dpto"] = $element->plaintext;
 		   break;
 		  case 4 : 
-		    $info["ciudad"] =  str_replace("  ","",$element->plaintext);
+		    $info["ciudad"] =  $element->plaintext;
 		   break;
 		  case 6 :
-		   $info["puesto"] =  str_replace("  ","",$element->plaintext);
+		   $info["puesto"] =  $element->plaintext;
 		    break;
 	      case 8:
-		   $info["dir"] =  str_replace("  ","",$element->plaintext);
+		   $info["dir"] =  $element->plaintext;
 		   break;
 		  case 10:
-		   $info["fecha"] =  str_replace("  ","",$element->plaintext);
+		   $info["fecha"] =  $element->plaintext;
 		   break;
 		  case 12:
-		    $info["mesa"] =  str_replace("  ","",$element->plaintext);
+		    $info["mesa"] =  $element->plaintext;
 			
 	  }
 	}
